@@ -36,6 +36,20 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/deps/mptensor/config" ${CMAKE_MODULE_
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/deps/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
+set(OMP_FLAG "")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  if("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS "15.0.0.20140528")
+     set(OMP_FLAG "-openmp")
+  else()
+     set(OMP_FLAG "-qopenmp")
+  endif()
+else()
+  find_package(OpenMP)
+  if(OPENMP_FOUND)
+      set(OMP_FLAG "${OpenMP_CXX_FLAGS}")
+  endif(OPENMP_FOUND)
+endif()
+
 find_package(LAPACK REQUIRED)
 find_package(MPI REQUIRED)
 
