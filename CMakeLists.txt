@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
-project(TNSolve CXX)
+project(TNSolve C CXX)
 set(TNSolve_VERSION 0.1-Beta)
 
 message(STATUS "CMake version: " ${CMAKE_VERSION})
@@ -36,6 +36,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/deps/mptensor/config" ${CMAKE_MODULE_
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/deps/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
+find_package(LAPACK REQUIRED)
 find_package(MPI REQUIRED)
 
 if(NOT MPTENSOR_ROOT)
