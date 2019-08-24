@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 project(TNSolve CXX)
 set(TNSolve_VERSION 0.1-Beta)
 
@@ -28,15 +28,15 @@ foreach(submod mptensor toml11)
 endif()
 endforeach()
 
-include(${PROJECT_SOURCE_DIR}/config/cxx11.cmake)
-cxx11()
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/deps/mptensor/config" ${CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/deps/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
 find_package(MPI REQUIRED)
-include_directories(${MPI_CXX_INCLUDE_PATH})
 
 if(NOT MPTENSOR_ROOT)
     add_subdirectory("${PROJECT_SOURCE_DIR}/deps/mptensor")
@@ -47,16 +47,14 @@ else()
     set(MPTENSOR_INCLUDE_DIR ${MPTENSOR_ROOT}/include)
     set(MPTENSOR_LIB_DIR ${MPTENSOR_ROOT}/lib)
     find_package(ScaLAPACK REQUIRED)
-    string(REGEX REPLACE ";" " " SCALAPACK_LIBS "${SCALAPACK_LIBRARIES}")
+
+    if(NOT EXISTS ${MPTENSOR_INCLUDE_DIR}/mptensor.hpp)
+        message(FATAL_ERROR "${MPTENSOR_INCLUDE_DIR}/mptensor.hpp is not found.")
+    endif()
+    if(NOT EXISTS ${MPTENSOR_LIB_DIR}/libmptensor.a)
+        message(FATAL_ERROR "${MPTENSOR_LIB_DIR}/libmptensor.a is not found.")
+    endif()
 endif()
 
-if(NOT EXISTS ${MPTENSOR_INCLUDE_DIR}/mptensor.hpp)
-    message(FATAL_ERROR "${MPTENSOR_INCLUDE_DIR}/mptensor.hpp is not found.")
-endif()
-if(NOT EXISTS ${MPTENSOR_LIB_DIR}/libmptensor.a)
-    message(FATAL_ERROR "${MPTENSOR_LIB_DIR}/libmptensor.a is not found.")
-endif()
-
-include_directories(${PROJECT_SOURCE_DIR}/deps/)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
