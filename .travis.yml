@@ -28,7 +28,8 @@ script:
 jobs:
   include:
     - stage: deploy docs
-      install: 
+      if: fork = false
+      install:
         - export ROOTDIR=`pwd`
         - sudo apt-get update
         - sudo apt-get install -y gcc gfortran cmake liblapack-dev
@@ -40,4 +41,3 @@ jobs:
         - VERBOSE=1 make doc
         - cd ${ROOTDIR}
       script: /bin/bash -x ./.travis/deploy_docs.sh
-
